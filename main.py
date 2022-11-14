@@ -67,37 +67,37 @@ def validarUsuario():
     url = dataConfig["url-backend-security"] + "/usuarios/validarUsuario"
     headers = {"Content-Type": "application/json"}
     bodyRequest = request.get_json()
-
     response = requests.post(url, json=bodyRequest, headers=headers)
 
     if (response.status_code == 200):
         print("El usuario se valido correctamente")
         infoUsuario = response.json()
 
-        tiempoToken = datetime.timedelta(seconds=60 * 60)
+        tiempoToken = datetime.timedelta(seconds=60*60)
         newToken = create_access_token(identity=infoUsuario, expires_delta=tiempoToken)
 
         return {"token": newToken}
     else:
         return {"mensaje": "Usuario y contraseña incorrectos"}, 401
 
+
 @app.route("/usuarios", methods=['GET'])
 def indexUsuario():
-    url = dataConfig["url-backend-registraduriasecurity"] + "/usuarios"
+    url = dataConfig["url-backend-security"] + "/usuarios"
     headers = {"Content-Type": "application/json"}
     response = requests.get(url, headers=headers)
     return response.json()
 
 @app.route("/usuarios/<string:id>", methods=['GET'])
 def showUsuario(id):
-    url = dataConfig['url-backend-registraduriasecurity'] + "/usuario/"+id
+    url = dataConfig["url-backend-security"] + "/usuarios/"+id
     headers = {"Content-Type": "application/json"}
     response = requests.get(url, headers=headers)
     return response.json()
 
 @app.route("/usuarios", methods=['POST'])
 def createUsuario():
-    url = dataConfig['url-backend-registraduriasecurity'] + "/usuarios"
+    url = dataConfig["url-backend-security"] + "/usuarios"
     headers = {"Content-Type": "application/json"}
     body = request.get_json()
     response = requests.get(url, json=body, headers=headers)
@@ -105,7 +105,7 @@ def createUsuario():
 
 @app.route("/usuarios/<string:id>", methods=['PUT'])
 def updateUsuario(id):
-    url = dataConfig['url-backend-registraduriasecurity'] + "/usuarios/"+id
+    url = dataConfig["url-backend-security"] + "/usuarios/"+id
     headers = {"Content-Type": "application/json"}
     body = request.get_json()
     response = requests.get(url, json=body, headers=headers)
@@ -114,7 +114,7 @@ def updateUsuario(id):
 ##no estoy segura de esta funcion
 @app.route("/usuarios/<string:idUsuario>/rol/<string:idRol>", methods=['PUT'])
 def asignarUsuario(idUsuario, idRol):
-    url = dataConfig['url-backend-registraduriasecurity'] + "/usuarios/"+idUsuario+"/rol/"+idRol
+    url = dataConfig["url-backend-security"] + "/usuarios/"+idUsuario+"/rol/"+idRol
     headers = {"Content-Type": "application/json"}
     body = request.get_json()
     response = requests.get(url, json=body, headers=headers)
@@ -122,7 +122,7 @@ def asignarUsuario(idUsuario, idRol):
 
 @app.route("/usuarios/<string:id>", methods=['DELETE'])
 def deleteUsuario(id):
-    url = dataConfig['url-backend-registraduriasecurity'] + "/usuarios/" + id
+    url = dataConfig["url-backend-security"] + "/usuarios/" + id
     headers = {"Content-Type": "application/json"}
     response = requests.get(url, headers=headers)
     return response.json()
@@ -130,14 +130,14 @@ def deleteUsuario(id):
 ####Permiso###
 @app.route("/permiso", methods=['GET'])
 def indexpermiso():
-    url = dataConfig['url-backend-registraduriasecurity'] + "/permiso"
+    url = dataConfig["url-backend-security"] + "/permiso"
     headers = {"Content-Type": "application/json"}
     response = requests.get(url, headers=headers)
     return response.json()
 
 @app.route("/permiso", methods=['POST'])
 def createpermiso():
-    url = dataConfig['url-backend-registraduriasecurity'] + "/permiso"
+    url = dataConfig["url-backend-security"] + "/permiso"
     headers = {"Content-Type": "application/json"}
     body = request.get_json()
     response = requests.post(url, json=body, headers=headers)
@@ -146,14 +146,14 @@ def createpermiso():
 
 @app.route("/permiso/<string:id>", methods=['GET'])
 def showpermiso(idPermiso):
-    url = dataConfig['url-backend-registraduriasecurity'] + "/permiso/"+id
+    url = dataConfig["url-backend-security"] + "/permiso/"+id
     headers = {"Content-Type": "application/json"}
     response = requests.get(url, headers=headers)
     return response.json()
 
 @app.route("/permiso/<string:idPermiso>", methods=['PUT'])
 def updatepermiso(idPermiso):
-    url = dataConfig['url-backend-registraduriasecurity'] + "/permiso"+idPermiso
+    url = dataConfig["url-backend-security"] + "/permiso/"+idPermiso
     headers = {"Content-Type": "application/json"}
     body = request.get_json()
     response = requests.put(url, json=body, headers=headers)
@@ -161,7 +161,7 @@ def updatepermiso(idPermiso):
 
 @app.route("/permiso/<string:idP>", methods=['DELETE'])
 def deletepermiso(idP):
-    url = dataConfig['url-backend-registraduriasecurity'] + "/permiso/"+idP
+    url = dataConfig["url-backend-security"] + "/permiso/"+idP
     headers = {"Content-Type": "application/json"}
     response = requests.delete(url, headers=headers)
     return response.json()
@@ -169,14 +169,14 @@ def deletepermiso(idP):
 ####Rol####
 @app.route("/rol", methods=['GET'])
 def indexrol():
-    url = dataConfig['url-backend-registraduriasecurity'] + "/rol"
+    url = dataConfig["url-backend-security"] + "/rol"
     headers = {"Content-Type": "application/json"}
     response = requests.get(url, headers=headers)
     return response.json()
 
 @app.route("/rol", methods=['POST'])
 def createrol():
-    url = dataConfig['url-backend-registraduriasecurity'] + "/rol"
+    url = dataConfig["url-backend-security"] + "/rol"
     headers = {"Content-Type": "application/json"}
     body = request.get_json()
     response = requests.get(url, json=body, headers=headers)
@@ -184,14 +184,14 @@ def createrol():
 
 @app.route("/rol/<string:id>", methods=['GET'])
 def showrol(id):
-    url = dataConfig['url-backend-registraduriasecurity'] + "/rol/"+id
+    url = dataConfig["url-backend-security"] + "/rol/"+id
     headers = {"Content-Type": "application/json"}
     response = requests.get(url, headers=headers)
     return response.json()
 
 @app.route("/rol/<string:id>", methods=['PUT'])
 def updaterol(id):
-    url = dataConfig['url-backend-registraduriasecurity'] + "/rol/"+ id
+    url = dataConfig["url-backend-security"] + "/rol/"+ id
     headers = {"Content-Type": "application/json"}
     body = request.get_json()
     response = requests.get(url, json=body, headers=headers)
@@ -199,7 +199,7 @@ def updaterol(id):
 
 @app.route("/roles/<string:id>", methods=['DELETE'])
 def deleterol(id):
-    url = dataConfig['url-backend-registraduriasecurity'] + "/rol/" + id
+    url = dataConfig["url-backend-security"] + "/rol/" + id
     headers = {"Content-Type": "application/json"}
     response = requests.get(url, headers=headers)
     return response.json()
