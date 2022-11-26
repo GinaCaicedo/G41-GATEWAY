@@ -29,28 +29,29 @@ def middleware():
     urlAcceso = request.path
     if (urlAcceso == "/login"):
         pass
-    else:
-        verify_jwt_in_request()
+
+   # else:
+        #verify_jwt_in_request()
+
+    elif verify_jwt_in_request():
 
         infoUsuario = get_jwt_identity()
         idRol = infoUsuario["rol"]["_id"]
-
         urlAcceso = transformarUrl(urlAcceso)
-
         urlValidarPermiso = dataConfig["url-backend-security"] + "/permiso-rol/validar-permiso/rol/" + idRol
         headersValidarPermiso = {"Content-Type": "application/json"}
         bodyValidarPermiso = {
             "url": urlAcceso,
             "metodo": request.method
         }
-        respuestaValidarPermiso = requests.get(urlValidarPermiso, json=bodyValidarPermiso,
-                                               headers=headersValidarPermiso)
+        respuestaValidarPermiso = requests.get(urlValidarPermiso, json=bodyValidarPermiso,headers=headersValidarPermiso)
         print("Respuesta validar permiso: ", respuestaValidarPermiso)
 
         if (respuestaValidarPermiso.status_code == 200):
             pass
         else:
             return {"mensaje": "Acceso Denegado"}, 401
+
 
 
 def transformarUrl(urlAcceso):
@@ -63,6 +64,66 @@ def transformarUrl(urlAcceso):
 
     print("Url después de transformarla:", urlAcceso)
     return urlAcceso
+# CODIGO GUIA
+# app=Flask(__name__)
+# cors = CORS(app)
+# from flask_jwt_extended import create_access_token, verify_jwt_in_request
+# from flask_jwt_extended import get_jwt_identity
+# from flask_jwt_extended import jwt_required
+# from flask_jwt_extended import JWTManager
+# app.config["JWT_SECRET_KEY"]="super-secret" #Cambiar por el que se conveniente
+# jwt = JWTManager(app)
+# @app.route("/login", methods=["POST"])
+# def create_token():
+#     data = request.get_json()
+#     headers = {"Content-Type": "application/json; charset=utf-8"}
+#     url=dataConfig["url-backend-security"]+'/usuarios/validar'
+#     response = requests.post(url, json=data, headers=headers)
+#     if response.status_code == 200:
+#         user = response.json()
+#         expires = datetime.timedelta(seconds=60 * 60*24)
+#         access_token = create_access_token(identity=user, expires_delta=expires)
+#         return jsonify({"token": access_token, "user_id": user["_id"]})
+#     else:
+#         return jsonify({"msg": "Bad username or password"}), 401
+#
+# @app.before_request
+# def before_request_callback():
+#     endPoint=limpiarURL(request.path)
+#     excludedRoutes=["/login"]
+#     if excludedRoutes.__contains__(request.path):
+#         pass
+#     elif verify_jwt_in_request():
+#         usuario = get_jwt_identity()
+#         if usuario["rol"]is not None:
+#             tienePersmiso=validarPermiso(endPoint,request.method,usuario["rol"]["_id"])
+#             if not tienePersmiso:
+#                 return jsonify({"message": "Permission denied"}), 401
+#         else:
+#             return jsonify({"message": "Permission denied"}), 401
+# def limpiarURL(url):
+#     partes = url.split("/")
+#     for laParte in partes:
+#         if re.search('\\d', laParte):
+#             url = url.replace(laParte, "?")
+#     return url
+# def validarPermiso(endPoint,metodo,idRol):
+#     url=dataConfig["url-backend-security"]+"/permisos-roles/validar-permiso/rol/"+str(idRol)
+#     tienePermiso=False
+#     headers = {"Content-Type": "application/json; charset=utf-8"}
+#     body={
+#         "url":endPoint,
+#         "metodo":metodo
+#     }
+#     response = requests.get(url,json=body, headers=headers)
+#     try:
+#         data=response.json()
+#         if("_id" in data):
+#             tienePermiso=True
+#     except:
+#         pass
+#     return tienePermiso
+#
 
 
 ###Usuario###
@@ -77,7 +138,7 @@ def validarUsuario():
         print("El usuario se valido correctamente")
         infoUsuario = response.json()
 
-        tiempoToken = datetime.timedelta(seconds=60 * 60)
+        tiempoToken = datetime.timedelta(seconds=60 * 60 * 24)
         newToken = create_access_token(identity=infoUsuario, expires_delta=tiempoToken)
 
         return {"token": newToken}
@@ -281,7 +342,6 @@ def crearPartido():
     headers = {"Content-Type": "application/json"}
     body = request.get_json()
     response = requests.post(url, json=body, headers=headers)
-
     return response.json()
 
 
@@ -329,6 +389,7 @@ def crearResultadoMesaCandidato(idMesa, idCandidatos):
     return response.json()
 
 
+
 @app.route("/Resultado/<string:id>", methods=['GET'])
 def getResultadoid(id):
     url = dataConfig["url-backend-academic"] + "/Resultado/" + id
@@ -360,6 +421,8 @@ def eliminarResultado(id):
     headers = {"Content-Type": "application/json"}
     response = requests.delete(url, headers=headers)
     return response.json()
+
+
 
 
 ####CANDIDATO###
@@ -406,7 +469,18 @@ def eliminarCandidato(id):
     return response.json()
 
 
-######
+
+@app.route("/Candidato/<string:idCandidato>/Partido/<string:idPartido>", methods=['PUT'])
+def asigPartido(idCandidato, idPartido):
+    url = dataConfig["url-backend-academic"] + "/Candidato/" + idCandidato + "/Partido/" + idPartido
+    headers = {"Content-Type": "application/json"}
+    response = requests.put(url, headers=headers)
+    return response.json()
+
+
+##########################
+
+
 
 def loadFileConfig():
     with open('config.json') as propiedades:
